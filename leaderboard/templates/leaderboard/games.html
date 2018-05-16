@@ -1,0 +1,15 @@
+<h1>Games</h1>
+
+<u1>
+	{% for game in games %}
+		<li>{{ game.played_date }}
+		{% if game.players.all %}
+		{% for playeringame in game.playeringame_set.all|dictsortreversed:"score" %}
+			<br>
+			{{ playeringame.player.player_name }}: {{ playeringame.score }}
+		{% endfor %}
+		{% else %}
+			<p>No players in this game.</p>
+		{% endif %}
+	{% endfor %}
+</ul>

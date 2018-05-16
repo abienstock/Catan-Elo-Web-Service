@@ -3,7 +3,7 @@
 	{% for playeringame in games %}
 		<li>{{ playeringame.game.played_date }}
 		<u1>
-		{% for player in playeringame.game.playeringame_set.all %}
+		{% for player in playeringame.game.playeringame_set.all|dictsortreversed:"score" %}
 			<br>{{ player.player.player_name }}: {{player.score}}
 		{% endfor %}
 	</ul>

@@ -1,7 +1,7 @@
 {% if players %}
     <ul>
     {% for player in players%}
-        <li>{{ player.player_name }}: {{ player.elo }}</li>
+        <li>{{ player.player_name }}: {{ player.elo|floatformat:2 }}</li>
     {% endfor %}
     </ul>
 {% else %}
