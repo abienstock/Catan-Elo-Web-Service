@@ -1,3 +1,14 @@
+{% if players %}
+    <ul>
+    {% for player in players%}
+        <li>{{ player.player_name }}: {{ player.elo }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No players are available.</p>
+{% endif %}
+
+{% comment %}
 {% if latest_game_list %}
     <ul>
     {% for game in latest_game_list %}
@@ -7,3 +18,4 @@
 {% else %}
     <p>No games are available.</p>
 {% endif %}
+{% endcomment %}

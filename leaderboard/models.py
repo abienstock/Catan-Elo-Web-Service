@@ -2,6 +2,7 @@ from django.db import models
 
 class Player(models.Model):
 	player_name = models.CharField(max_length=200)
+	elo = models.IntegerField(default=1500)
 
 	def __str__(self):
 		return self.player_name

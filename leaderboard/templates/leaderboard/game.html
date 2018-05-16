@@ -2,7 +2,7 @@
 {% if game.players.all %}
 	<u1>
 		{% for playeringame in game.playeringame_set.all %}
-			<li>{{ playeringame.player.player_name }}: {{playeringame.score}}</li>
+			<li>{{ playeringame.player.player_name }}: {{ playeringame.score }}: {{ playeringame.player.elo }}</li>
 		{% endfor %}
 	</ul>
 {% else %}
