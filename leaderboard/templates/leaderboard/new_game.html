@@ -2,24 +2,38 @@
 
 <form action="{% url 'add_game' %}" method="post">
 {% csrf_token %}
-	<select name="player_name1">
+	<select name="player_name0">
 		<option value="None">None</option>
 		{% for player in players%}
     	    <option value={{ player.player_name }}>{{ player.player_name }}</option>
 	    {% endfor %}
 	</select>
+	<select name="player_score0">
+		<option value="None">None</option>
+		{% for i in "xxxxxxxxxxx" %}
+    		<option value={{ forloop.counter0 }}>{{ forloop.counter0 }}</option>
+		{% endfor %}
+	</select><br>
+	<select name="player_name1">
+		<option value="None">None</option>		
+		{% for player in players%}
+    	    <option value={{ player.player_name }}>{{ player.player_name }}</option>
+	    {% endfor %}
+	</select>
 	<select name="player_score1">
+		<option value="None">None</option>				
 		{% for i in "xxxxxxxxxxx" %}
     		<option value={{ forloop.counter0 }}>{{ forloop.counter0 }}</option>
 		{% endfor %}
 	</select><br>
 	<select name="player_name2">
 		<option value="None">None</option>		
-		{% for player in players%}
+		{% for player in players%}	
     	    <option value={{ player.player_name }}>{{ player.player_name }}</option>
 	    {% endfor %}
 	</select>
 	<select name="player_score2">
+		<option value="None">None</option>				
 		{% for i in "xxxxxxxxxxx" %}
     		<option value={{ forloop.counter0 }}>{{ forloop.counter0 }}</option>
 		{% endfor %}
@@ -31,28 +45,19 @@
 	    {% endfor %}
 	</select>
 	<select name="player_score3">
+		<option value="None">None</option>				
 		{% for i in "xxxxxxxxxxx" %}
     		<option value={{ forloop.counter0 }}>{{ forloop.counter0 }}</option>
 		{% endfor %}
 	</select><br>
 	<select name="player_name4">
 		<option value="None">None</option>		
-		{% for player in players%}	
-    	    <option value={{ player.player_name }}>{{ player.player_name }}</option>
-	    {% endfor %}
-	</select>
-	<select name="player_score4">
-		{% for i in "xxxxxxxxxxx" %}
-    		<option value={{ forloop.counter0 }}>{{ forloop.counter0 }}</option>
-		{% endfor %}
-	</select><br>
-	<select name="player_name5">
-		<option value="None">None</option>		
 		{% for player in players%}
     	    <option value={{ player.player_name }}>{{ player.player_name }}</option>
 	    {% endfor %}
 	</select>
-	<select name="player_score5">
+	<select name="player_score4">
+		<option value="None">None</option>				
 		{% for i in "xxxxxxxxxxx" %}
     		<option value={{ forloop.counter0 }}>{{ forloop.counter0 }}</option>
 		{% endfor %}

@@ -25,10 +25,7 @@ def add_player(request):
 	pname = request.POST['player_name']
 	p = Player(player_name = pname)
 	p.save()
-	players = Player.objects.all()
-	context = {'players': players}
-	return render(request, 'leaderboard/new_game.html', context)
-	#return HttpResponseRedirect(reverse('new_game', args=(players)))	
+	return HttpResponseRedirect(reverse('new_game'))
 
 def game_results(request, game_id):
 	game = get_object_or_404(Game, pk=game_id)
@@ -74,74 +71,29 @@ def update_ratings(elo_info):
 			j += 1
 		i += 1
 
+def add_player_to_game(game, pname, pscore):
+	p = Player.objects.filter(player_name=pname)
+	if not p.exists():
+		p = Player(player_name = pname)
+		p.save()
+	else:
+		p = p.first()
+	pig = PlayerInGame(game = game, player = p, score = pscore)
+	pig.save()
+	return p;
+
 def add_game(request):
 	g = Game(played_date=timezone.now())
 	g.save()
 
 	elo_info = []
 
-	pname = request.POST['player_name1']
-	pscore = request.POST['player_score1']
-	p1 = Player.objects.filter(player_name=pname)
-	if not p1.exists():
-		p1 = Player(player_name = pname)
-		p1.save()
-	else:
-		p1 = p1.first()
-	pig1 = PlayerInGame(game = g, player = p1, score = pscore)
-	pig1.save()
-	elo_info.append((p1, p1.elo, pscore))
-
-	pname = request.POST['player_name2']
-	pscore = request.POST['player_score2']
-	p2 = Player.objects.filter(player_name=pname)
-	if not p2.exists():
-		p2 = Player(player_name = pname)
-		p2.save()
-	else:
-		p2 = p2.first()		
-	pig2 = PlayerInGame(game = g, player = p2, score = pscore)
-	pig2.save()
-	elo_info.append((p2, p2.elo, pscore))
-
-	pname = request.POST['player_name3']
-	pscore = request.POST['player_score3']
-	if (pname != "None" and pscore != ""):
-		p3 = Player.objects.filter(player_name=pname)
-		if not p3.exists():
-			p3 = Player(player_name = pname)
-			p3.save()
-		else:
-			p3 = p3.first()					
-		pig3 = PlayerInGame(game = g, player = p3, score = pscore)
-		pig3.save()
-		elo_info.append((p3, p3.elo, pscore))
-
-	pname = request.POST['player_name4']
-	pscore = request.POST['player_score4']
-	if (pname != "None" and pscore != ""):
-		p4 = Player.objects.filter(player_name=pname)
-		if not p4.exists():
-			p4 = Player(player_name = pname)
-			p4.save()
-		else:
-			p4 = p4.first()								
-		pig4 = PlayerInGame(game = g, player = p4, score = pscore)
-		pig4.save()
-		elo_info.append((p4, p4.elo, pscore))
-
-	pname = request.POST['player_name5']
-	pscore = request.POST['player_score5']
-	if (pname != "None" and pscore != ""):	
-		p5 = Player.objects.filter(player_name=pname)
-		if not p5.exists():
-			p5 = Player(player_name = pname)
-			p5.save()
-		else:
-			p5 = p5.first()								
-		pig5 = PlayerInGame(game = g, player = p5, score = pscore)
-		pig5.save()
-		elo_info.append((p5, p5.elo, pscore))
+	for i in range(5):
+		pname = request.POST['player_name'+str(i)]
+		pscore = request.POST['player_score'+str(i)]
+		if (i < 2 or (pname != "None" and pscore != "None")):
+			p = add_player_to_game(g, pname, pscore)
+			elo_info.append((p, p.elo, pscore))
 
 	update_ratings(elo_info)
 
