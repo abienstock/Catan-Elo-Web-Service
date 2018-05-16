@@ -1,3 +1,5 @@
+import math
+
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.template import loader
 from django.shortcuts import render, get_object_or_404
@@ -44,15 +46,20 @@ def player_stats(request, player_name):
 	games = PlayerInGame.objects.filter(player__player_name=player_name)
 	return render(request, 'leaderboard/player_stats.html', {'games': games, 'player': player})
 
-def calc_expected(A, B):
-	return 1.0 / (1.0 + 10.0 ** ((B-A)/400.0))
+def calc_expected(elo_a, elo_b):
+	return 1.0 / (1.0 + 10.0 ** ((elo_b-elo_a)/400.0))
 
-def calc_elo(exp, score, k=32.0):
-	return k * (score - exp)
+def calc_elo(exp, score, margin, k=32.0):
+	return k * math.log(math.fabs(margin) + 1) * (score - exp)
 
-def new_elo(A, B, score):
+def new_elo(elo_a, elo_b, score_a, score_b):
 	# returns new elo rating of player A
-	return calc_elo(calc_expected(A, B), score)
+	if score_a > score_b:
+		return calc_elo(calc_expected(elo_a, elo_b), 1.0, score_a - score_b)
+	elif score_a == score_b:
+		return calc_elo(calc_expected(elo_a, elo_b), 0.5, score_a - score_b)
+	else:
+		return calc_elo(calc_expected(elo_a, elo_b), 0.0, score_a - score_b)
 
 def update_ratings(elo_info):
 	num_players = len(elo_info)
@@ -60,15 +67,8 @@ def update_ratings(elo_info):
 	while i < num_players:
 		j = i + 1
 		while j < num_players:
-			if int(elo_info[i][2]) > int(elo_info[j][2]):
-				elo_info[i][0].elo = elo_info[i][0].elo + new_elo(elo_info[i][1], elo_info[j][1], 1.0)
-				elo_info[j][0].elo = elo_info[j][0].elo + new_elo(elo_info[j][1], elo_info[i][1], 0.0)
-			elif int(elo_info[i][2]) == int(elo_info[j][2]):
-				elo_info[i][0].elo = elo_info[i][0].elo + new_elo(elo_info[i][1], elo_info[j][1], 0.5)
-				elo_info[j][0].elo = elo_info[j][0].elo + new_elo(elo_info[j][1], elo_info[i][1], 0.5)
-			else:
-				elo_info[i][0].elo = elo_info[i][0].elo + new_elo(elo_info[i][1], elo_info[j][1], 0.0)
-				elo_info[j][0].elo = elo_info[j][0].elo + new_elo(elo_info[j][1], elo_info[i][1], 1.0)
+			elo_info[i][0].elo = elo_info[i][0].elo + new_elo(elo_info[i][1], elo_info[j][1], int(elo_info[i][2]), int(elo_info[j][2]))
+			elo_info[j][0].elo = elo_info[j][0].elo + new_elo(elo_info[j][1], elo_info[i][1], int(elo_info[j][2]), int(elo_info[i][2]))
 			elo_info[i][0].save()
 			elo_info[j][0].save()
 			j += 1
