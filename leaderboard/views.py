@@ -5,6 +5,7 @@ from django.template import loader
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.urls import reverse
+from django.core.exceptions import SuspiciousOperation
 
 from .models import Game, Player, PlayerInGame
 
@@ -15,8 +16,10 @@ def index(request):
 
 def games(request):
 	games = Game.objects.all()
-	context = {'games': games}
+	players = Player.objects.all()
+	context = {'games': games, 'players': players}
 	return render(request, 'leaderboard/games.html', context)
+	
 
 def new_player(request):
 	return render(request, 'leaderboard/new_player.html')
@@ -72,29 +75,76 @@ def update_ratings(elo_info):
 		i += 1
 
 def add_player_to_game(game, pname, pscore):
-	p = Player.objects.filter(player_name=pname)
-	if not p.exists():
-		p = Player(player_name = pname)
-		p.save()
-	else:
-		p = p.first()
+	p = Player.objects.get(player_name=pname)
 	pig = PlayerInGame(game = game, player = p, score = pscore)
-	pig.save()
-	return p;
+	return p, pig;
 
 def add_game(request):
 	g = Game(played_date=timezone.now())
-	g.save()
+	g.save()	
 
 	elo_info = []
+	names = []
+	pigs = []
 
 	for i in range(5):
 		pname = request.POST['player_name'+str(i)]
+		if pname in names and pname != 'None':
+			g.delete()			
+			raise SuspiciousOperation("User attempted to input '%s' twice into a game." % pname)
+		names.append(pname)
 		pscore = request.POST['player_score'+str(i)]
 		if (i < 2 or (pname != "None" and pscore != "None")):
-			p = add_player_to_game(g, pname, pscore)
+			(p, pig) = add_player_to_game(g, pname, pscore)
+			pigs.append(pig)
 			elo_info.append((p, p.elo, pscore))
 
+	for pig in pigs:
+		pig.save()
+
 	update_ratings(elo_info)
+
+	return HttpResponseRedirect(reverse('game_results', args=(g.id,)))
+
+def recalc_elo():
+	players = Player.objects.all()
+	for player in players:
+		player.elo = 1500
+		player.save()
+
+	games = Game.objects.all()
+	for game in games:
+		gameplayers = game.playeringame_set.all()
+		elo_info = []
+		for p in gameplayers:
+			pscore = p.score
+			player = p.player
+			elo_info.append((player, player.elo, pscore))
+		update_ratings(elo_info)
+
+
+def edit_game(request, game_id):
+	g = Game.objects.get(pk=game_id)
+
+	old_players = g.players.all()
+	names = []
+	pigs = []
+
+	for i in range(5):
+		pname = request.POST['player_name'+str(i)]
+		if pname in names and pname != 'None':
+			raise SuspiciousOperation("User attempted to input '%s' twice into a game." % pname)
+		names.append(pname)
+		pscore = request.POST['player_score'+str(i)]
+		if (i < 2 or (pname != "None" and pscore != "None")):
+			(p, pig) = add_player_to_game(g, pname, pscore)
+			pigs.append(pig)
+
+	g.players.clear()
+
+	for pig in pigs:
+		pig.save()
+
+	recalc_elo()
 
 	return HttpResponseRedirect(reverse('game_results', args=(g.id,)))
