@@ -94,7 +94,13 @@ def add_game(request):
 			raise SuspiciousOperation("User attempted to input '%s' twice into a game." % pname)
 		names.append(pname)
 		pscore = request.POST['player_score'+str(i)]
-		if (i < 2 or (pname != "None" and pscore != "None")):
+		if i < 2 and (pname == 'None' or pscore == 'None'):
+			g.delete()			
+			raise SuspiciousOperation("Info for first two players must be completely filled in.")
+		elif i < 2 or (pname != "None" or pscore != "None"):
+			if pname == 'None' or pscore == 'None':
+				g.delete()			
+				raise SuspiciousOperation("Info for player must be completely filled in.")
 			(p, pig) = add_player_to_game(g, pname, pscore)
 			pigs.append(pig)
 			elo_info.append((p, p.elo, pscore))
@@ -136,7 +142,11 @@ def edit_game(request, game_id):
 			raise SuspiciousOperation("User attempted to input '%s' twice into a game." % pname)
 		names.append(pname)
 		pscore = request.POST['player_score'+str(i)]
-		if (i < 2 or (pname != "None" and pscore != "None")):
+		if i < 2 and (pname == 'None' or pscore == 'None'):
+			raise SuspiciousOperation("Info for first two players must be completely filled in.")
+		elif (i < 2 or (pname != "None" or pscore != "None")):
+			if pname == 'None' or pscore == 'None':
+				raise SuspiciousOperation("Info for player must be completely filled in.")
 			(p, pig) = add_player_to_game(g, pname, pscore)
 			pigs.append(pig)
 
