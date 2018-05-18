@@ -1,3 +1,7 @@
+{% extends "leaderboard/base.html" %}
+
+{% block content %}
+
 <h1>{{ player.player_name }}</h1>
 <u1>
 	{% for playeringame in games %}
@@ -9,3 +13,4 @@
 	</ul>
 	{% endfor %}
 </ul>
+{% endblock %}

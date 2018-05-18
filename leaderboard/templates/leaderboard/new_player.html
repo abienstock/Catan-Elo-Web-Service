@@ -1,3 +1,7 @@
+{% extends "leaderboard/base.html" %}
+
+{% block content %}
+
 <h1>New Player</h1>
 
 <form action="{% url 'add_player' %}" method="post">
@@ -5,3 +9,4 @@
 	<input type="text" name="player_name"/>
 <input type="submit" value="Add Player!" />
 </form>
+{% endblock %}

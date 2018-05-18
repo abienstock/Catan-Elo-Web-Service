@@ -1,3 +1,7 @@
+{% extends "leaderboard/base.html" %}
+
+{% block content %}
+
 <h1>New Game</h1>
 <form action="{% url 'add_game' %}" method="post">
 {% csrf_token %}
@@ -23,3 +27,4 @@ for (i = 0; i < 5; i ++) {
 <br>
 <input type="submit" value="Add Game!" />
 </form>
+{% endblock %}

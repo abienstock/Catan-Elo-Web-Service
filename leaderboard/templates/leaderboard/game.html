@@ -1,3 +1,6 @@
+{% extends "leaderboard/base.html" %}
+
+{% block content %}
 <h1>{{ game.played_date }}</h1>
 {% if game.players.all %}
 	<u1>
@@ -8,3 +11,4 @@
 {% else %}
 	<p>No players in this game.</p>
 {% endif %}
+{% endblock %}

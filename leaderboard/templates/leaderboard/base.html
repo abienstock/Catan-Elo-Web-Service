@@ -1,0 +1,8 @@
+<body>
+		<a href="{% url 'index' %}">Leaderboard</a>
+		<a href="{% url 'games' %}">Game History</a>
+		<a href="{% url 'new_game' %}">New Game</a>
+		<a href="{% url 'new_player' %}">New Player</a>
+	{% block content %}
+	{% endblock %}
+</body>

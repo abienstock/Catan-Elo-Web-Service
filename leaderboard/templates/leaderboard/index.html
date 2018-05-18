@@ -1,3 +1,6 @@
+{% extends "leaderboard/base.html" %}
+
+{% block content %}
 {% if players %}
     <ul>
     {% for player in players%}
@@ -7,3 +10,4 @@
 {% else %}
     <p>No players are available.</p>
 {% endif %}
+{% endblock %}
