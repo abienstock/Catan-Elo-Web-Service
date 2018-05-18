@@ -1,1 +1,5 @@
-*.pyc env/ lib/ 
+*.pyc
+env/*
+lib/*
+leaderboard/migrations/*
+static/*
