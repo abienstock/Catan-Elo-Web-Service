@@ -5,7 +5,7 @@
 <h1>Games</h1>
 
 <u1>
-	{% for game in games %}
+	{% for game in games|dictsortreversed:"played_date" %}
 		<li>{{ game.played_date }}
 		<form action="{% url 'edit_game' game.id %}" method="post">
 		{% csrf_token %}
