@@ -1,0 +1,8 @@
+{% extends "leaderboard/base.html" %}
+
+{% block content %}
+<h1>Player Stats</h1>
+{% for player in players %}
+	<a href = "{% url 'player_stats' player.player_name %}">{{ player.player_name }}</a>
+{% endfor %}
+{% endblock %}

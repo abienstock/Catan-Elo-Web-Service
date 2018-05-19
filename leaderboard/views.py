@@ -18,8 +18,7 @@ def games(request):
 	games = Game.objects.all()
 	players = Player.objects.all()
 	context = {'games': games, 'players': players}
-	return render(request, 'leaderboard/games.html', context)
-	
+	return render(request, 'leaderboard/games.html', context)	
 
 def new_player(request):
 	return render(request, 'leaderboard/new_player.html')
@@ -44,7 +43,13 @@ def player_stats(request, player_name):
 	if not player.exists():
 		raise Http404("Player does not exist")
 	games = PlayerInGame.objects.filter(player__player_name=player_name)
-	return render(request, 'leaderboard/player_stats.html', {'games': games, 'player': player})
+	context = {'games': games, 'player': player}
+	return render(request, 'leaderboard/player_stats.html', context)
+
+def player_stats_main(request):
+	players = Player.objects.all()
+	context = {'players': players}
+	return render(request, 'leaderboard/player_stats_main.html', context)
 
 def calc_expected(elo_a, elo_b):
 	return 1.0 / (1.0 + 10.0 ** ((elo_b-elo_a)/400.0))
