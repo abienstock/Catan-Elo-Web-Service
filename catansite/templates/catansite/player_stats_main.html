@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>Player Stats</h1>
-{% for player in players %}
-	<a href = "{% url 'player_stats' player.player_name %}">{{ player.player_name }}</a>
+{% for uil in uils %}
+	<a href = "{% url 'player_stats' league_name uil.user.username %}">{{ uil.user.username }}</a>
 {% endfor %}
 {% endblock %}

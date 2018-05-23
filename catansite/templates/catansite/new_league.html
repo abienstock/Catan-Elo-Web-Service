@@ -1,0 +1,22 @@
+{% extends "catansite/base.html" %}
+
+{% block content %}
+
+<h1>New League</h1>
+<form action="{% url 'add_league' %}" method="post">
+<p>League Name</p>
+<input type ="text" name ="league_name"/>
+<p>League Members (usernames)</p>
+{% csrf_token %}
+<script>
+var i;
+for (i = 0; i < 10; i ++) {
+	document.write("<br><input type=\"text\" name=\"user_name");
+	document.write(i);
+	document.write("\">");
+}
+</script>
+<br>
+<input type="submit" value="Add League!" />
+</form>
+{% endblock %}

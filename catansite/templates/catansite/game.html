@@ -2,10 +2,10 @@
 
 {% block content %}
 <h1>{{ game.played_date }}</h1>
-{% if game.players.all %}
+{% if game.uils.all %}
 	<u1>
-		{% for playeringame in game.playeringame_set.all|dictsortreversed:"score" %}
-			<li>{{ playeringame.player.player_name }}: {{ playeringame.score }}: {{ playeringame.player.elo|floatformat:2 }}</li>
+		{% for uig in game.useringame_set.all|dictsortreversed:"score" %}
+			<li>{{ uig.uil.user.username }}: {{ uig.score }}: {{ uig.uil.elo|floatformat:2 }}</li>
 		{% endfor %}
 	</ul>
 {% else %}

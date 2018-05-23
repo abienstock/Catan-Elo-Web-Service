@@ -1,10 +1,10 @@
 {% extends "catansite/base.html" %}
 
 {% block content %}
-{% if players %}
+{% if usersinleague %}
     <ul>
-    {% for player in players%}
-        <li>{{ player.player_name }}: {{ player.elo|floatformat:2 }}</li>
+    {% for uil in usersinleague %}
+        <li>{{ uil.user.username }}: {{ uil.elo|floatformat:2 }}</li>
     {% endfor %}
     </ul>
 {% else %}

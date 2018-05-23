@@ -7,15 +7,15 @@
 <u1>
 	{% for game in games|dictsortreversed:"played_date" %}
 		<li>{{ game.played_date }}
-		<form action="{% url 'edit_game' game.id %}" method="post">
+		<form action="{% url 'edit_game' league_name game.id %}" method="post">
 		{% csrf_token %}
 		<script>
 			var i = 0;
-			document.write("{% for playeringame in game.playeringame_set.all|dictsortreversed:'score' %}<br><select name=\"player_name");
+			document.write("{% for useringame in game.useringame_set.all|dictsortreversed:'score' %}<br><select name=\"username");
 			document.write(i);
-			document.write("\"><option value=\"{{ playeringame.player.player_name }}\" selected hidden>{{ playeringame.player.player_name }}</option><option value = \"None\">None</option>{% for player in players %}<option value={{ player.player_name }}>{{ player.player_name }}</option>{% endfor %}</select><select name=\"player_score");
+			document.write("\"><option value=\"{{ useringame.uil.user.username }}\" selected hidden>{{ useringame.uil.user.username }}</option><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
 			document.write(i);
-			document.write("\"><option value=\"{{ playeringame.score }}\" selected hidden>{{ playeringame.score }}</option><option value = \"None\">None</option>");
+			document.write("\"><option value=\"{{ useringame.score }}\" selected hidden>{{ useringame.score }}</option><option value = \"None\">None</option>");
 			var j;
 			for (j = 0; j < 11; j ++) {
 				document.write("<option value=");
@@ -28,9 +28,9 @@
 			i ++;
 			document.write("{% endfor %}");
 			while(i < 5){
-				document.write("<br><select name=\"player_name");
+				document.write("<br><select name=\"username");
 				document.write(i);
-				document.write("\"><option value = \"None\">None</option>{% for player in players%}<option value={{ player.player_name }}>{{ player.player_name }}</option>{% endfor %}</select><select name=\"player_score");
+				document.write("\"><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
 				document.write(i);
 				document.write("\"><option value=\"None\">None</option>")
 				var j;

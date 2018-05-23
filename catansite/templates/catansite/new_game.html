@@ -3,14 +3,14 @@
 {% block content %}
 
 <h1>New Game</h1>
-<form action="{% url 'add_game' %}" method="post">
+<form action="{% url 'add_game' league_name %}" method="post">
 {% csrf_token %}
 <script>
 var i;
 for (i = 0; i < 5; i ++) {
-	document.write("<br><select name=\"player_name");
+	document.write("<br><select name=\"username");
 	document.write(i);
-	document.write("\"><option value = \"None\">None</option>{% for player in players%}<option value={{ player.player_name }}>{{ player.player_name }}</option>{% endfor %}</select><select name=\"player_score");
+	document.write("\"><option value = \"None\">None</option>{% for uil in uils%}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
 	document.write(i);
 	document.write("\"><option value=\"None\">None</option>")
 	var j;

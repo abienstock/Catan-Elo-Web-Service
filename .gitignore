@@ -3,3 +3,4 @@ env/*
 lib/*
 static/*
 catansite/__pycache__
+catansite/migrations
