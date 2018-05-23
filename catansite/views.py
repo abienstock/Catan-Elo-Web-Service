@@ -12,7 +12,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Game, UserInGame, League, UserInLeague
 
 def landing(request):
-	return HttpResponseRedirect(reverse('leaderboard'))
+	if request.user.is_authenticated:
+		return HttpResponseRedirect(reverse('leagues'))
+	else:
+		return HttpResponseRedirect(reverse('login'))
 
 def leaderboard(request, league_name):
 	league = get_object_or_404(League, league_name = league_name)
@@ -202,3 +205,8 @@ def add_league(request):
 		elif (i < 2 or uname != ''):
 			add_user_to_league(l, uname)
 	return HttpResponseRedirect(reverse('leaderboard', args=(l.league_name,)))
+
+def leagues(request):
+	leagues = request.user.league_set.all()
+	context = {'leagues': leagues}
+	return render(request, 'catansite/leagues.html', context)

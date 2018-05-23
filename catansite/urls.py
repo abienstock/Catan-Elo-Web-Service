@@ -32,5 +32,6 @@ urlpatterns = [
     url(r'^new_account/$', views.new_acct, name='new_acct'),
     url('accounts/', include('django.contrib.auth.urls')),
     url(r'^new_league/$', views.new_league, name='new_league'),
-    url(r'^add_league/$', views.add_league, name='add_league')
+    url(r'^add_league/$', views.add_league, name='add_league'),
+    url(r'^leagues/$', views.leagues, name='leagues')
 ]

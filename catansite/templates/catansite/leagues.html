@@ -1,0 +1,8 @@
+{% extends "catansite/base.html" %}
+
+{% block content %}
+<h1>My Leagues</h1>
+{% for league in leagues %}
+<a href = "{% url 'leaderboard' league.league_name %}">{{ league.league_name }}</a>
+{% endfor %}
+{% endblock %}
