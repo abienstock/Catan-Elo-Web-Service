@@ -108,6 +108,7 @@ def new_game(request, league_name = ''):
 			elo_info = []
 			names = []
 			uigs = []
+			scores = []
 
 			for i in range(5):
 				uname = request.POST['username'+str(i)]
@@ -116,6 +117,7 @@ def new_game(request, league_name = ''):
 					raise SuspiciousOperation("User attempted to input '%s' twice into a game." % uname)
 				names.append(uname)
 				uscore = request.POST['user_score'+str(i)]
+				scores.append(uscore)
 				if i < 2 and (uname == 'None' or uscore == 'None'):
 					g.delete()			
 					raise SuspiciousOperation("Info for first two players must be completely filled in.")
@@ -126,6 +128,10 @@ def new_game(request, league_name = ''):
 					(uil, uig) = add_player_to_game(g, uname, uscore, league)
 					uigs.append(uig)
 					elo_info.append((uil, uil.elo, uscore))
+
+			if not '10' in scores:
+				g.delete()
+				raise SuspiciousOperation("One Player must have 10 points.")
 
 			for uig in uigs:
 				uig.save()
@@ -162,6 +168,7 @@ def games(request, league_name, game_id = 0):
 
 		names = []
 		uigs = []
+		scores = []
 
 		for i in range(5):
 			uname = request.POST['username'+str(i)]
@@ -169,6 +176,7 @@ def games(request, league_name, game_id = 0):
 				raise SuspiciousOperation("User attempted to input '%s' twice into a game." % uname)
 			names.append(uname)
 			uscore = request.POST['user_score'+str(i)]
+			scores.append(uscore)
 			if i < 2 and (uname == 'None' or uscore == 'None'):
 				raise SuspiciousOperation("Info for first two players must be completely filled in.")
 			elif (i < 2 or (uname != "None" or uscore != "None")):
@@ -177,6 +185,9 @@ def games(request, league_name, game_id = 0):
 				(uil, uig) = add_player_to_game(g, uname, uscore, league)
 				uigs.append(uig)
 
+		if not '10' in scores:
+				raise SuspiciousOperation("One Player must have 10 points.")
+
 		g.uils.clear()
 
 		for uig in uigs:
@@ -184,7 +195,7 @@ def games(request, league_name, game_id = 0):
 
 		recalc_elo(league)
 
-		return HttpResponseRedirect(reverse('game_results', args=(league_name, g.id,)))
+		return HttpResponseRedirect(reverse('games', args=(league_name,)))
 	else:
 		league = get_object_or_404(League, league_name = league_name)
 		games = league.game_set.all()
