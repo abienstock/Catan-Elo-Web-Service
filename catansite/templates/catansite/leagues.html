@@ -2,7 +2,11 @@
 
 {% block content %}
 <h1>My Leagues</h1>
-{% for league in leagues %}
-<a href = "{% url 'leaderboard' league.league_name %}">{{ league.league_name }}</a>
-{% endfor %}
+{% if leagues %}
+	{% for league in leagues %}
+	<a href = "{% url 'leaderboard' league.league_name %}">{{ league.league_name }}</a>
+	{% endfor %}	
+{% else %}
+	No leagues yet.
+{% endif %}
 {% endblock %}
