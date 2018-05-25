@@ -5,34 +5,18 @@
 <h1>Games</h1>
 
 <u1>
-	{% for game in games|dictsortreversed:"played_date" %}
-		<li>{{ game.played_date }}
-		<form action="{% url 'edit_game' league_name game.id %}" method="post">
-		{% csrf_token %}
-		<script>
-			var i = 0;
-			document.write("{% for useringame in game.useringame_set.all|dictsortreversed:'score' %}<br><select name=\"username");
-			document.write(i);
-			document.write("\"><option value=\"{{ useringame.uil.user.username }}\" selected hidden>{{ useringame.uil.user.username }}</option><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
-			document.write(i);
-			document.write("\"><option value=\"{{ useringame.score }}\" selected hidden>{{ useringame.score }}</option><option value = \"None\">None</option>");
-			var j;
-			for (j = 0; j < 11; j ++) {
-				document.write("<option value=");
-				document.write(j);
-				document.write(">");
-				document.write(j);
-				document.write("</option>");
-			}
-			document.write("</select><br>");
-			i ++;
-			document.write("{% endfor %}");
-			while(i < 5){
-				document.write("<br><select name=\"username");
+	{% if games %}
+		{% for game in games|dictsortreversed:"played_date" %}
+			<li>{{ game.played_date }}
+			<form action="{% url 'edit_game' league_name game.id %}" method="post">
+			{% csrf_token %}
+			<script>
+				var i = 0;
+				document.write("{% for useringame in game.useringame_set.all|dictsortreversed:'score' %}<br><select name=\"username");
 				document.write(i);
-				document.write("\"><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
+				document.write("\"><option value=\"{{ useringame.uil.user.username }}\" selected hidden>{{ useringame.uil.user.username }}</option><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
 				document.write(i);
-				document.write("\"><option value=\"None\">None</option>")
+				document.write("\"><option value=\"{{ useringame.score }}\" selected hidden>{{ useringame.score }}</option><option value = \"None\">None</option>");
 				var j;
 				for (j = 0; j < 11; j ++) {
 					document.write("<option value=");
@@ -41,13 +25,33 @@
 					document.write(j);
 					document.write("</option>");
 				}
-				document.write("</select><br>");				
+				document.write("</select><br>");
 				i ++;
-			}
-		</script>
-		<br>
-		<input type="submit" value="Edit Game" />
-		</form>
-	{% endfor %}
+				document.write("{% endfor %}");
+				while(i < 5){
+					document.write("<br><select name=\"username");
+					document.write(i);
+					document.write("\"><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
+					document.write(i);
+					document.write("\"><option value=\"None\">None</option>")
+					var j;
+					for (j = 0; j < 11; j ++) {
+						document.write("<option value=");
+						document.write(j);
+						document.write(">");
+						document.write(j);
+						document.write("</option>");
+					}
+					document.write("</select><br>");				
+					i ++;
+				}
+			</script>
+			<br>
+			<input type="submit" value="Edit Game" />
+			</form>
+		{% endfor %}
+	{% else %}
+		No games played yet.
+	{% endif %}
 </ul>
 {% endblock %}

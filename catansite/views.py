@@ -50,14 +50,16 @@ def new_game_in_league(request):
 
 def player_stats(request, league_name, username):
 	league = get_object_or_404(League, league_name = league_name)
+	games = league.game_set.all()
 	uigs = UserInGame.objects.filter(game__league = league, uil__user__username = username)
-	context = {'league_name': league_name, 'uigs': uigs, 'username': username}
+	context = {'games': games, 'league_name': league_name, 'uigs': uigs, 'username': username}
 	return render(request, 'catansite/player_stats.html', context)
 
 def player_stats_main(request, league_name):
 	league = get_object_or_404(League, league_name = league_name)	
+	games = league.game_set.all()	
 	uils = league.userinleague_set.all()
-	context = {'league_name': league_name, 'uils': uils, 'league_name': league_name}
+	context = {'games': games, 'uils': uils, 'league_name': league_name}
 	return render(request, 'catansite/player_stats_main.html', context)
 
 def calc_expected(elo_a, elo_b):

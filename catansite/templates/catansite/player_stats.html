@@ -3,14 +3,18 @@
 {% block league_content %}
 
 <h1>{{ username }}</h1>
-<u1>
-	{% for uig in uigs %}
-		<li>{{ uig.game.played_date }}
+	{% if games %}
 		<u1>
-		{% for uig in uig.game.useringame_set.all|dictsortreversed:"score" %}
-			<br>{{ uig.uil.user.username }}: {{ uig.score }}
+		{% for uig in uigs %}
+			<li>{{ uig.game.played_date }}
+			<u1>
+			{% for uig in uig.game.useringame_set.all|dictsortreversed:"score" %}
+				<br>{{ uig.uil.user.username }}: {{ uig.score }}
+			{% endfor %}
+		</ul>
 		{% endfor %}
-	</ul>
-	{% endfor %}
+	{% else %}
+		No games played yet.
+	{% endif %}
 </ul>
 {% endblock %}
