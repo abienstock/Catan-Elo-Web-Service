@@ -3,14 +3,18 @@
 {% block content %}
 
 <h1>New Game</h1>
-<form action="{% url 'new_game_in_league' %}" method="post">
-{% csrf_token %}
-<select name="league_name">
-{% for league in leagues %}
-	<option value="{{ league.league_name }}">{{ league.league_name }}</option>
-{% endfor %}
-</select>
-<br>
-<input type="submit" value="Add Game!" />
-</form>
+{% if leagues %}
+	<form action="{% url 'new_game_in_league' %}" method="post">
+	{% csrf_token %}
+	<select name="league_name">
+	{% for league in leagues %}
+		<option value="{{ league.league_name }}">{{ league.league_name }}</option>
+	{% endfor %}
+	</select>
+	<br><br>
+	<input type="submit" value="Add Game!" />
+	</form>
+{% else %}
+No leagues yet.
+{% endif %}
 {% endblock %}

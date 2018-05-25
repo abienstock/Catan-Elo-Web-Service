@@ -22,20 +22,31 @@ def landing(request):
 def leaderboard(request, league_name):
 	league = get_object_or_404(League, league_name = league_name)
 	usersinleague = league.userinleague_set.order_by('-elo')
-	context = {'league_name': league_name, 'usersinleague': usersinleague}
-	return render(request, 'catansite/leaderboard.html', context)
+	for user in usersinleague:
+		if request.user.username == user.user.username:
+			context = {'league_name': league_name, 'usersinleague': usersinleague}
+			return render(request, 'catansite/leaderboard.html', context)
+	raise SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))
 
 def games(request, league_name):
 	league = get_object_or_404(League, league_name = league_name)
 	games = league.game_set.all()
 	usersinleague = league.userinleague_set.all()
-	context = {'league_name': league_name, 'games': games, 'usersinleague': usersinleague, 'league_name': league_name}
-	return render(request, 'catansite/games.html', context)
+	for user in usersinleague:
+		if request.user.username == user.user.username:
+			context = {'league_name': league_name, 'games': games, 'usersinleague': usersinleague, 'league_name': league_name}
+			return render(request, 'catansite/games.html', context)
+	raise SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))
 
 def game_results(request, league_name, game_id):
+	league = get_object_or_404(League, league_name = league_name)	
 	game = get_object_or_404(Game, pk=game_id)
-	context = {'league_name': league_name, 'game': game}
-	return render(request, 'catansite/game.html', context)
+	usersinleague = league.userinleague_set.all()
+	for user in usersinleague:
+		if request.user.username == user.user.username:
+			context = {'league_name': league_name, 'game': game}
+			return render(request, 'catansite/game.html', context)
+	raise SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))
 
 def new_game(request):
 	user = request.user
@@ -52,17 +63,24 @@ def new_game_in_league(request):
 
 def player_stats(request, league_name, username):
 	league = get_object_or_404(League, league_name = league_name)
+	uils = league.userinleague_set.all()
 	games = league.game_set.all()
 	uigs = UserInGame.objects.filter(game__league = league, uil__user__username = username)
-	context = {'games': games, 'league_name': league_name, 'uigs': uigs, 'username': username}
-	return render(request, 'catansite/player_stats.html', context)
+	for user in uils:
+		if request.user.username == user.user.username:
+			context = {'games': games, 'league_name': league_name, 'uigs': uigs, 'username': username}
+			return render(request, 'catansite/player_stats.html', context)
+	raise SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))			
 
 def player_stats_main(request, league_name):
-	league = get_object_or_404(League, league_name = league_name)	
+	league = get_object_or_404(League, league_name = league_name)
 	games = league.game_set.all()	
 	uils = league.userinleague_set.all()
-	context = {'games': games, 'uils': uils, 'league_name': league_name}
-	return render(request, 'catansite/player_stats_main.html', context)
+	for user in uils:
+		if request.user.username == user.user.username:
+			context = {'games': games, 'uils': uils, 'league_name': league_name}
+			return render(request, 'catansite/player_stats_main.html', context)
+	raise SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))
 
 def calc_expected(elo_a, elo_b):
 	return 1.0 / (1.0 + 10.0 ** ((elo_b-elo_a)/400.0))
