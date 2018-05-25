@@ -2,14 +2,16 @@ import math
 
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.template import loader
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.urls import reverse
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, authenticate
 
 from .models import Game, UserInGame, League, UserInLeague
+from .forms import SignUpForm
 
 def landing(request):
 	if request.user.is_authenticated:
@@ -177,15 +179,18 @@ def edit_game(request, league_name, game_id):
 	return HttpResponseRedirect(reverse('game_results', args=(league_name, g.id,)))
 
 def new_acct(request):
-	users = User.objects.all()
 	if request.method == 'POST':
-		form = UserCreationForm(request.POST)
+		form = SignUpForm(request.POST)
 		if form.is_valid():
 			form.save()
-			return HttpResponse("User created successfully!")
+			username = form.cleaned_data.get('username')
+			raw_password = form.cleaned_data.get('password1')
+			user = authenticate(username=username, password=raw_password)
+			login(request, user)
+			return HttpResponseRedirect(reverse('leagues'))
 	else:
-		form = UserCreationForm()
-		return render(request, 'registration/create_acct.html', {'form': form})
+		form = SignUpForm()
+	return render(request, 'registration/create_acct.html', {'form': form})
 
 def new_league(request):
 	return render(request, 'catansite/new_league.html')

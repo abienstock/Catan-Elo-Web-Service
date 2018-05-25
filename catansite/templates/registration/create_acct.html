@@ -3,10 +3,21 @@
 {% block content %}
 <h1>Create Account</h1>
 
-<form action="{% url 'new_acct' %}" method='post'>
+<form method='post'>
     {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
+    {% for field in form %}
+	    <p>
+	    	{{ field.label_tag }}<br>
+	    	{{ field }}
+	    	{% if field.help_text %}
+	    		<small style="color: grey">{{ field.help_text|safe }}</small>
+	    	{% endif %}
+	    	{% for error in field.errors %}
+	    		<p style="color: red">{{ error }}</p>
+	    	{% endfor %}
+	    </p>
+	   {% endfor %}
+    <input type="submit" value="Submit"/>
 </form>
 
 {% endblock %}
