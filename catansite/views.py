@@ -1,11 +1,10 @@
 import math
 
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponse, Http404, HttpResponseBadRequest, HttpResponseForbidden
 from django.template import loader
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.urls import reverse
-from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate
@@ -26,7 +25,7 @@ def leaderboard(request, league_name):
 		if request.user.username == user.user.username:
 			context = {'league_name': league_name, 'usersinleague': usersinleague}
 			return render(request, 'catansite/leaderboard.html', context)
-	raise SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))
+	return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))
 
 def game_results(request, league_name, game_id):
 	league = get_object_or_404(League, league_name = league_name)	
@@ -36,7 +35,7 @@ def game_results(request, league_name, game_id):
 		if request.user.username == user.user.username:
 			context = {'league_name': league_name, 'game': game}
 			return render(request, 'catansite/game.html', context)
-	return SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))
+	return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))
 
 def player_stats(request, league_name, username):
 	league = get_object_or_404(League, league_name = league_name)
@@ -47,7 +46,7 @@ def player_stats(request, league_name, username):
 		if request.user.username == user.user.username:
 			context = {'games': games, 'league_name': league_name, 'uigs': uigs, 'username': username}
 			return render(request, 'catansite/player_stats.html', context)
-	raise SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))			
+	return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))			
 
 def player_stats_main(request, league_name):
 	league = get_object_or_404(League, league_name = league_name)
@@ -57,7 +56,7 @@ def player_stats_main(request, league_name):
 		if request.user.username == user.user.username:
 			context = {'games': games, 'uils': uils, 'league_name': league_name}
 			return render(request, 'catansite/player_stats_main.html', context)
-	raise SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))
+	return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))
 
 def calc_expected(elo_a, elo_b):
 	return 1.0 / (1.0 + 10.0 ** ((elo_b-elo_a)/400.0))
@@ -114,24 +113,24 @@ def new_game(request, league_name = ''):
 				uname = request.POST['username'+str(i)]
 				if uname in names and uname != 'None':
 					g.delete()			
-					raise SuspiciousOperation("User attempted to input '%s' twice into a game." % uname)
+					return HttpResponseBadRequest("<h1>Bad Request (400)</h1>User attempted to input '%s' twice into a game." % uname)
 				names.append(uname)
 				uscore = request.POST['user_score'+str(i)]
 				scores.append(uscore)
 				if i < 2 and (uname == 'None' or uscore == 'None'):
 					g.delete()			
-					raise SuspiciousOperation("Info for first two players must be completely filled in.")
+					return HttpResponseBadRequest("<h1>Bad Request (400)</h1>Info for first two players must be completely filled in.")
 				elif i < 2 or (uname != "None" or uscore != "None"):
 					if uname == 'None' or uscore == 'None':
 						g.delete()			
-						raise SuspiciousOperation("Info for player must be completely filled in.")
+						return HttpResponseBadRequest("<h1>Bad Request (400)</h1>Info for player must be completely filled in.")
 					(uil, uig) = add_player_to_game(g, uname, uscore, league)
 					uigs.append(uig)
 					elo_info.append((uil, uil.elo, uscore))
 
-			if not '10' in scores:
+			if scores.count('10') != 1:
 				g.delete()
-				raise SuspiciousOperation("One Player must have 10 points.")
+				return HttpResponseBadRequest("<h1>Bad Request (400)</h1>Exactly one Player must have 10 points.")
 
 			for uig in uigs:
 				uig.save()
@@ -173,20 +172,20 @@ def games(request, league_name, game_id = 0):
 		for i in range(5):
 			uname = request.POST['username'+str(i)]
 			if uname in names and uname != 'None':
-				raise SuspiciousOperation("User attempted to input '%s' twice into a game." % uname)
+				return HttpResponseBadRequest("<h1>Bad Request (400)</h1>User attempted to input '%s' twice into a game." % uname)
 			names.append(uname)
 			uscore = request.POST['user_score'+str(i)]
 			scores.append(uscore)
 			if i < 2 and (uname == 'None' or uscore == 'None'):
-				raise SuspiciousOperation("Info for first two players must be completely filled in.")
+				return HttpResponseBadRequest("<h1>Bad Request (400)</h1>Info for first two players must be completely filled in.")
 			elif (i < 2 or (uname != "None" or uscore != "None")):
 				if uname == 'None' or uscore == 'None':
-					raise SuspiciousOperation("Info for player must be completely filled in.")
+					return HttpResponseBadRequest("<h1>Bad Request (400)</h1>Info for player must be completely filled in.")
 				(uil, uig) = add_player_to_game(g, uname, uscore, league)
 				uigs.append(uig)
 
-		if not '10' in scores:
-				raise SuspiciousOperation("One Player must have 10 points.")
+		if scores.count('10') != 1:
+				return HttpResponseBadRequest("<h1>Bad Request (400)</h1>Exactly one Player must have 10 points.")
 
 		g.uils.clear()
 
@@ -204,7 +203,7 @@ def games(request, league_name, game_id = 0):
 			if request.user.username == user.user.username:
 				context = {'league_name': league_name, 'games': games, 'usersinleague': usersinleague, 'league_name': league_name}
 				return render(request, 'catansite/games.html', context)
-		raise SuspiciousOperation("User '%s' is not in league '%s'." % (request.user.username, league_name))
+		return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))
 
 def new_acct(request):
 	if request.method == 'POST':
@@ -224,7 +223,7 @@ def new_league(request):
 	if request.method == 'POST':
 		league_name = request.POST['league_name']
 		if League.objects.filter(league_name = league_name).exists():
-			raise SuspiciousOperation("League with name '%s' already exists." % league_name)
+			return HttpResponseBadRequest("<h1>Bad Request (400)</h1>League with name '%s' already exists." % league_name)
 		l = League(league_name = league_name)
 		l.save()	
 		league_name = request.POST['league_name']
@@ -234,12 +233,18 @@ def new_league(request):
 		for i in range(10):
 			uname = request.POST['user_name'+str(i)]
 			if uname in names and uname != '':
-				raise SuspiciousOperation("User attempted to input '%s' twice into a league." % uname)
+				l.delete()
+				return HttpResponseBadRequest("<h1>Bad Request (400)</h1>User attempted to input '%s' twice into a league." % uname)
 			names.append(uname)
 			if i < 2 and uname == '':
-				raise SuspiciousOperation("Must provide at least two players.")
+				l.delete()
+				return HttpResponseBadRequest("<h1>Bad Request (400)</h1>Must provide at least two players.")
 			elif (i < 2 or uname != ''):
-				add_user_to_league(l, uname)
+				try:
+					add_user_to_league(l, uname)
+				except:
+					l.delete()
+					return HttpResponseBadRequest("<h1>Bad Request (400)</h1>User '%s' does not exist." % uname)
 		return HttpResponseRedirect(reverse('leaderboard', args=(l.league_name,)))
 	else:
 		return render(request, 'catansite/new_league.html')
@@ -248,6 +253,7 @@ def add_user_to_league(league, uname):
 	u = User.objects.get(username=uname)
 	uil = UserInLeague(league = league, user = u)
 	uil.save()
+
 
 def leagues(request):
 	leagues = request.user.league_set.all()
