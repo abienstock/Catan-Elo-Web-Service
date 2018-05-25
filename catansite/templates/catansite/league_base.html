@@ -1,0 +1,12 @@
+{% extends "catansite/base.html" %}
+{% block content %}
+	{% if user.is_authenticated %}
+		<br>
+		League: {{ league_name }}
+		<a href="{% url 'leaderboard' league_name %}">Leaderboard</a>
+		<a href="{% url 'games' league_name %}">League Games</a>				
+		<a href="{% url 'player_stats_main' league_name %}">Player Stats</a><br>
+	{% endif %}	
+	{% block league_content %}
+	{% endblock %}	
+{% endblock %}

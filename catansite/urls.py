@@ -21,8 +21,9 @@ from . import views
 urlpatterns = [
 	url(r'^$', views.landing, name='landing'),
 	url(r'^(?P<league_name>[a-zA-z]+)/leaderboard/$', views.leaderboard, name='leaderboard'),
-    url(r'^results/(?P<game_id>[0-9]+)/$', views.game_results, name='game_results'),
-    url(r'^(?P<league_name>[a-zA-z]+)/new_game/$', views.new_game, name='new_game'),
+    url(r'^(?P<league_name>[a-zA-z]+)/results/(?P<game_id>[0-9]+)/$', views.game_results, name='game_results'),
+    url(r'^new_game/$', views.new_game, name='new_game'),
+    url(r'^new_game_in_league/$', views.new_game_in_league, name='new_game_in_league'),
     url(r'^(?P<league_name>[a-zA-z]+)/add_game/$', views.add_game, name='add_game'),
     url(r'^(?P<league_name>[a-zA-z]+)/edit_game/(?P<game_id>[0-9]+)/$', views.edit_game, name='edit_game'),
     url(r'^(?P<league_name>[a-zA-z]+)/games/$', views.games, name='games'),

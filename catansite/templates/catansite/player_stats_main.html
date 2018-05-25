@@ -1,6 +1,6 @@
-{% extends "catansite/base.html" %}
+{% extends "catansite/league_base.html" %}
 
-{% block content %}
+{% block league_content %}
 <h1>Player Stats</h1>
 {% for uil in uils %}
 	<a href = "{% url 'player_stats' league_name uil.user.username %}">{{ uil.user.username }}</a>

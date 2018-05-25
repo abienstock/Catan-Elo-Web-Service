@@ -3,27 +3,13 @@
 {% block content %}
 
 <h1>New Game</h1>
-<form action="{% url 'add_game' league_name %}" method="post">
+<form action="{% url 'new_game_in_league' %}" method="post">
 {% csrf_token %}
-<script>
-var i;
-for (i = 0; i < 5; i ++) {
-	document.write("<br><select name=\"username");
-	document.write(i);
-	document.write("\"><option value = \"None\">None</option>{% for uil in uils%}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
-	document.write(i);
-	document.write("\"><option value=\"None\">None</option>")
-	var j;
-	for (j = 0; j < 11; j ++) {
-		document.write("<option value=");
-		document.write(j);
-		document.write(">");
-		document.write(j);
-		document.write("</option>");
-	}
-	document.write("</select><br>");
-}
-</script>
+<select name="league_name">
+{% for league in leagues %}
+	<option value="{{ league.league_name }}">{{ league.league_name }}</option>
+{% endfor %}
+</select>
 <br>
 <input type="submit" value="Add Game!" />
 </form>

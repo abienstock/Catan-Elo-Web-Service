@@ -20,36 +20,44 @@ def landing(request):
 def leaderboard(request, league_name):
 	league = get_object_or_404(League, league_name = league_name)
 	usersinleague = league.userinleague_set.order_by('-elo')
-	context = {'usersinleague': usersinleague}
+	context = {'league_name': league_name, 'usersinleague': usersinleague}
 	return render(request, 'catansite/leaderboard.html', context)
 
 def games(request, league_name):
 	league = get_object_or_404(League, league_name = league_name)
 	games = league.game_set.all()
 	usersinleague = league.userinleague_set.all()
-	context = {'games': games, 'usersinleague': usersinleague, 'league_name': league_name}
+	context = {'league_name': league_name, 'games': games, 'usersinleague': usersinleague, 'league_name': league_name}
 	return render(request, 'catansite/games.html', context)
 
-def game_results(request, game_id):
+def game_results(request, league_name, game_id):
 	game = get_object_or_404(Game, pk=game_id)
-	return render(request, 'catansite/game.html', {'game': game})
+	context = {'league_name': league_name, 'game': game}
+	return render(request, 'catansite/game.html', context)
 
-def new_game(request, league_name):
+def new_game(request):
+	user = request.user
+	leagues = user.league_set.all()
+	context = {'leagues': leagues}
+	return render(request, 'catansite/new_game.html', context)
+
+def new_game_in_league(request):
+	league_name = request.POST['league_name']
 	league = get_object_or_404(League, league_name = league_name)	
 	uils = league.userinleague_set.all()
 	context = {'uils': uils, 'league_name': league_name}
-	return render(request, 'catansite/new_game.html', context)
+	return render(request, 'catansite/new_game_in_league.html', context)
 
 def player_stats(request, league_name, username):
 	league = get_object_or_404(League, league_name = league_name)
 	uigs = UserInGame.objects.filter(game__league = league, uil__user__username = username)
-	context = {'uigs': uigs, 'username': username}
+	context = {'league_name': league_name, 'uigs': uigs, 'username': username}
 	return render(request, 'catansite/player_stats.html', context)
 
 def player_stats_main(request, league_name):
 	league = get_object_or_404(League, league_name = league_name)	
 	uils = league.userinleague_set.all()
-	context = {'uils': uils, 'league_name': league_name}
+	context = {'league_name': league_name, 'uils': uils, 'league_name': league_name}
 	return render(request, 'catansite/player_stats_main.html', context)
 
 def calc_expected(elo_a, elo_b):
@@ -117,7 +125,7 @@ def add_game(request, league_name):
 
 	update_ratings(elo_info)
 
-	return HttpResponseRedirect(reverse('game_results', args=(g.id,)))
+	return HttpResponseRedirect(reverse('game_results', args=(league_name, g.id,)))
 
 def recalc_elo(league):
 	uils = league.userinleague_set.all()
@@ -164,7 +172,7 @@ def edit_game(request, league_name, game_id):
 
 	recalc_elo(league)
 
-	return HttpResponseRedirect(reverse('game_results', args=(g.id,)))
+	return HttpResponseRedirect(reverse('game_results', args=(league_name, g.id,)))
 
 def new_acct(request):
 	users = User.objects.all()
