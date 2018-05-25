@@ -8,7 +8,7 @@
 	{% if games %}
 		{% for game in games|dictsortreversed:"played_date" %}
 			<li>{{ game.played_date }}
-			<form action="{% url 'edit_game' league_name game.id %}" method="post">
+			<form action="{% url 'games' league_name game.id %}" method="post">
 			{% csrf_token %}
 			<script>
 				var i = 0;
