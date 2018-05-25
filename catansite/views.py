@@ -218,3 +218,6 @@ def leagues(request):
 	leagues = request.user.league_set.all()
 	context = {'leagues': leagues}
 	return render(request, 'catansite/leagues.html', context)
+
+def league_home(request, league_name):
+	return HttpResponseRedirect(reverse('leaderboard', args=(league_name,)))
