@@ -6,6 +6,8 @@
 <form action="{% url 'new_league' %}" method="post">
 <p>League Name</p>
 <input type ="text" name ="league_name"/>
+<br>
+<small style="color: grey">Only letters or digits</small>
 <p>League Members (usernames)</p>
 {% csrf_token %}
 <script>
