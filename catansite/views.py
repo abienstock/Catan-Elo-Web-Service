@@ -34,7 +34,7 @@ def game_results(request, league_name, game_id):
 	usersinleague = league.userinleague_set.all()
 	for user in usersinleague:
 		if request.user.username == user.user.username:
-			context = {'league_name': league_name, 'game': game}
+			context = {'league_name': league_name, 'game': game, 'uils': usersinleague}
 			return render(request, 'catansite/game.html', context)
 	return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))
 

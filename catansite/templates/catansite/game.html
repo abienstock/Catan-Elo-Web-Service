@@ -3,11 +3,18 @@
 {% block league_content %}
 <h1>{{ game.played_date }}</h1>
 {% if game.uils.all %}
+	Game Results:
 	<u1>
 		{% for uig in game.useringame_set.all|dictsortreversed:"score" %}
-			<li>{{ uig.uil.user.username }}: {{ uig.score }}: {{ uig.uil.elo|floatformat:2 }}</li>
+			<li>{{ uig.uil.user.username }}: {{ uig.score }}</li>
 		{% endfor %}
 	</ul>
+	<br>
+	Updated {{ league_name }} elo ratings:
+	<ul>
+		{% for uil in uils|dictsortreversed:"elo" %}
+			<li>{{ uil.user.username }}: {{ uil.elo|floatformat:2 }}</li>
+		{% endfor %}
 {% else %}
 	<p>No players in this game.</p>
 {% endif %}
