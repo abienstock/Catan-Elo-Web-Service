@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate
+from django.core.mail import send_mail
 
 from .models import Game, UserInGame, League, UserInLeague
 from .forms import SignUpForm
@@ -101,7 +102,8 @@ def new_game(request, league_name = ''):
 			return render(request, 'catansite/new_game.html', context)
 		else:
 			league = get_object_or_404(League, league_name = league_name)
-			g = Game(played_date=timezone.now(), league = league)
+			time = timezone.localtime(timezone.now())
+			g = Game(played_date=time, league = league)
 			g.save()	
 
 			elo_info = []
@@ -137,12 +139,32 @@ def new_game(request, league_name = ''):
 
 			update_ratings(elo_info)
 
+			send_new_game_mail(league_name, uigs, league.userinleague_set.all(), time)
 			return HttpResponseRedirect(reverse('game_results', args=(league_name, g.id,)))
 	else:
 		user = request.user
 		leagues = user.league_set.all()
 		context = {'leagues': leagues, 'league_name': None}
 		return render(request, 'catansite/new_game.html', context)
+
+def send_new_game_mail(league_name, uigs, uils, time):
+	emails = []
+	for uil in uils:
+		emails.append(uil.user.email)
+	message_body = "A new game has been added in the league '%s' at %s:\n\n" % (league_name, time)
+	for uig in uigs:
+		message_body += "%s: %s\n" % (uig.uil.user.username, uig.score)
+	message_body += "\nThe updated elo ratings are:\n\n"
+	for uil in uils:
+		elo = float(uil.elo)
+		message_body += "%s: %.2f\n" % (uil.user.username, elo)
+	send_mail(
+		"Catansite New Game",
+		message_body,
+		'catansite@gmail.com',
+		emails,
+		fail_silently = False,
+	)
 
 def recalc_elo(league):
 	uils = league.userinleague_set.all()
@@ -164,6 +186,11 @@ def games(request, league_name, game_id = 0):
 	if request.method == 'POST':
 		league = get_object_or_404(League, league_name = league_name)
 		g = Game.objects.get(pk=game_id)
+
+		old_scores = []
+		old_uigs = g.useringame_set.all()
+		for uig in old_uigs:
+			old_scores.append((uig.uil.user.username, uig.score))
 
 		names = []
 		uigs = []
@@ -194,6 +221,7 @@ def games(request, league_name, game_id = 0):
 
 		recalc_elo(league)
 
+		send_edited_game_mail(league_name, uigs, league.userinleague_set.all(), timezone.localtime(g.played_date), old_scores)
 		return HttpResponseRedirect(reverse('games', args=(league_name,)))
 	else:
 		league = get_object_or_404(League, league_name = league_name)
@@ -204,6 +232,28 @@ def games(request, league_name, game_id = 0):
 				context = {'league_name': league_name, 'games': games, 'usersinleague': usersinleague, 'league_name': league_name}
 				return render(request, 'catansite/games.html', context)
 		return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))
+
+def send_edited_game_mail(league_name, uigs, uils, time, old_scores):
+	emails = []
+	for uil in uils:
+		emails.append(uil.user.email)
+	message_body = "The game in the league '%s', played at %s, has been updated.\n\nOld Scores:\n\n" % (league_name, time)
+	for score in old_scores:
+		message_body += "%s: %s\n" % (score[0], score[1])
+	message_body += "\nNew scores:\n\n"
+	for uig in uigs:
+		message_body += "%s: %s\n" % (uig.uil.user.username, uig.score)
+	message_body += "\nThe updated elo ratings are:\n\n"
+	for uil in uils:
+		elo = float(uil.elo)
+		message_body += "%s: %.2f\n" % (uil.user.username, elo)
+	send_mail(
+		"Catansite Updated Game",
+		message_body,
+		'catansite@gmail.com',
+		emails,
+		fail_silently = False,
+	)
 
 def new_acct(request):
 	if request.method == 'POST':
@@ -245,9 +295,27 @@ def new_league(request):
 				except:
 					l.delete()
 					return HttpResponseBadRequest("<h1>Bad Request (400)</h1>User '%s' does not exist." % uname)
+		send_league_mail(names, league_name)
 		return HttpResponseRedirect(reverse('leaderboard', args=(l.league_name,)))
 	else:
 		return render(request, 'catansite/new_league.html')
+
+def send_league_mail(names, league_name):
+	emails = []
+	for name in names:
+		if name != '':
+			u = User.objects.get(username=name)
+			emails.append(u.email)
+	message_body = "You've been added to the league '%s' with users:\n\n" % league_name
+	for name in names:
+		message_body += "%s\n" % name
+	send_mail(
+		"Catansite New League",
+		message_body,
+		'catansite@gmail.com',
+		emails,
+		fail_silently = False,
+	)
 
 def add_user_to_league(league, uname):
 	u = User.objects.get(username=uname)
