@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from . import views
 
@@ -35,3 +36,5 @@ urlpatterns = [
     url(r'^leagues/$', views.leagues, name='leagues'),
     url(r'^(?P<league_name>[a-zA-z0-9]+)/$', views.league_home, name='league_home')
 ]
+
+urlpatterns += staticfiles_urlpatterns()
