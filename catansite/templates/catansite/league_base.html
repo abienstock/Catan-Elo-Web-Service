@@ -1,12 +1,32 @@
 {% extends "catansite/base.html" %}
-{% block content %}
+{% block navbar %}
 	{% if user.is_authenticated %}
-		<br>
-		League: {{ league_name }}
-		<a href="{% url 'leaderboard' league_name %}">Leaderboard</a>
-		<a href="{% url 'games' league_name %}">League Games</a>				
-		<a href="{% url 'player_stats_main' league_name %}">Player Stats</a><br>
+		<nav class="navbar navbar-expand-sm navbar-custom" style="border-top: 1.5px solid black">
+			<div class="navbar-collapse" id="navbarCustom">
+				<ul class = "navbar-nav w-100 second-row">
+					<li class = "nav-item"><a class = "navbar-brand" href="{% url 'leaderboard' league_name %}">League: {{ league_name }}</a></li>
+					{% if "leaderboard" in request.path %}
+						<li class = "nav-item active"><a class = "nav-link" href="{% url 'leaderboard' league_name %}">Leaderboard</a></li>
+					{% else %}
+						<li class = "nav-item"><a class = "nav-link" href="{% url 'leaderboard' league_name %}">Leaderboard</a></li>
+					{% endif %}
+					{% if "games" in request.path %}
+						<li class = "nav-item active"><a class = "nav-link" href="{% url 'games' league_name %}">League Games</a></li>
+					{% else %}
+						<li class = "nav-item"><a class = "nav-link" href="{% url 'games' league_name %}">League Games</a></li>
+					{% endif %}
+					{% if "player_stats" in request.path %}
+						<li class = "nav-item active"><a class = "nav-link" href="{% url 'player_stats_main' league_name %}">Player Stats</a></li>
+					{% else %}
+						<li class = "nav-item"><a class = "nav-link" href="{% url 'player_stats_main' league_name %}">Player Stats</a></li>
+					{% endif %}
+				</ul>
+			</div>
+		</nav>
 	{% endif %}	
+{% endblock %}
+
+{% block content %}
 	{% block league_content %}
 	{% endblock %}	
 {% endblock %}
