@@ -1,15 +1,16 @@
 {% extends "catansite/base.html" %}
 
 {% block content %}
-<h1>Login</h1>
+<br><h1 style="text-align:center; color:#9C2121;">Login</h1><br>
 
-<form method='post'>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit" />
-</form>
-
-<a href="{% url 'password_reset' %}">Forgot password?</a><br>
-<a href="{% url 'new_acct' %}">Create a New Account!</a>
+<div class="col-md-12" style="text-align:center;">
+	<form method='post' style ="margin-right:5%;">
+	    {% csrf_token %}
+	    {{ form.as_p }}
+	    <input type="submit" value="Login!" class="btn btn-danger btn-custom" style="margin-left:5%;"/>
+	</form>
+	<a href="{% url 'password_reset' %}">Forgot password?</a><br>
+	<a href="{% url 'new_acct' %}">Create a New Account!</a>
+</div>
 
 {% endblock %}

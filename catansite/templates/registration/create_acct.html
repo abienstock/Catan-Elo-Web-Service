@@ -1,23 +1,32 @@
 {% extends "catansite/base.html" %}
 
 {% block content %}
-<h1>Create Account</h1>
+<br><h1 style="text-align:center; color:#9C2121;">Create Account</h1><br>
 
 <form method='post'>
     {% csrf_token %}
     {% for field in form %}
-	    <p>
-	    	{{ field.label_tag }}<br>
-	    	{{ field }}
-	    	{% if field.help_text %}
-	    		<small style="color: grey">{{ field.help_text|safe }}</small>
-	    	{% endif %}
-	    	{% for error in field.errors %}
-	    		<p style="color: red">{{ error }}</p>
-	    	{% endfor %}
-	    </p>
-	   {% endfor %}
-    <input type="submit" value="Submit"/>
+	    <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4" style="text-align:center">
+              {{ field.label_tag }}<br>
+              {{ field }}<br>
+              {% if field.help_text %}
+                <small style="color: grey; text-align:left">{{ field.help_text|safe }}</small>
+              {% endif %}
+              {% for error in field.errors %}
+                <p style="color: red">{{ error }}</p>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+    <br>
+    <div class="row">
+    	<div class="col-md-4"></div>
+        <div class="col-md-4" style="text-align:center">
+        	<input type="submit" value="Create Account!" class="btn btn-danger btn-custom" style="text-align:center;"/>
+        <div class="col-md-4"></div>
+    </div>
 </form>
 
 {% endblock %}
