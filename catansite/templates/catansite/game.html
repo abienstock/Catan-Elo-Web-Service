@@ -1,21 +1,52 @@
 {% extends "catansite/league_base.html" %}
 
 {% block league_content %}
-<h1>{{ game.played_date }}</h1>
-{% if game.uils.all %}
-	Game Results:
-	<u1>
-		{% for uig in game.useringame_set.all|dictsortreversed:"score" %}
-			<li>{{ uig.uil.user.username }}: {{ uig.score }}</li>
-		{% endfor %}
-	</ul>
-	<br>
-	Updated {{ league_name }} elo ratings:
-	<ul>
-		{% for uil in uils|dictsortreversed:"elo" %}
-			<li>{{ uil.user.username }}: {{ uil.elo|floatformat:2 }}</li>
-		{% endfor %}
-{% else %}
-	<p>No players in this game.</p>
-{% endif %}
+	<br><h1 style="text-align:center; color:#9C2121;">Game: {{ game.played_date }}</h1><br>
+	{% if game.uils.all %}
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-10">
+				<table class="table table-hover table-bordered" style = "width:80%">
+					<tr>
+						<th colspan="2" style="font-size:x-large; color:#9C2121;">Game Results</th>
+					</tr>
+					<tr>
+						<th style="width: 50%;">Player</th>
+						<th style="width: 50%;">Points</th>
+					</tr>
+					{% for uig in game.useringame_set.all|dictsortreversed:"score" %}
+						<tr>
+							<td style="width: 50%;">{{ uig.uil.user.username }}</td>
+							<td style="width: 50%;">{{ uig.score }}</td>
+						</tr>
+					{% endfor %}
+				</table>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-10">
+				<table class="table table-hover table-bordered" style = "width:80%">
+					<tr>
+						<th colspan="2" style="font-size:x-large; color:#9C2121;">Updated {{ league_name }} Elo Ratings</th>
+					</tr>
+					<tr>
+						<th style="width: 50%;">Player</th>
+						<th style="width: 50%;">Elo Rating</th>
+					</tr>
+					{% for uil in uils|dictsortreversed:"elo" %}
+						<tr>
+							<td style="width: 50%;">{{ uil.user.username }}</td>
+							<td style="width: 50%;">{{ uil.elo|floatformat:2 }}</td>
+						</tr>
+					{% endfor %}
+				</table>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+	{% else %}
+		<p>No players in this game.</p>
+	{% endif %}
 {% endblock %}

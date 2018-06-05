@@ -1,12 +1,34 @@
 {% extends "catansite/base.html" %}
 
 {% block content %}
-<h1>My Leagues</h1>
+<br><h1 style="text-align:center; color:#9C2121;">My Leagues</h1><br>
 {% if leagues %}
-	{% for league in leagues %}
-	<a href = "{% url 'leaderboard' league.league_name %}">{{ league.league_name }}</a>
-	{% endfor %}	
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-10">
+			<table class="table table-hover table-bordered" style = "width:80%">
+				{% for league in leagues %}
+					<tr>
+						<th colspan="2" style="font-size:x-large"><a style="color:#9C2121;" href = "{% url 'leaderboard' league.league_name %}">{{ league.league_name }}</a></th>
+					</tr>
+					<tr>
+						<th style="width: 50%;">Player</th>
+						<th style="width: 50%;">Elo Rating</th>
+					</tr>
+					{% for uil in league.userinleague_set.all|dictsortreversed:"elo" %}
+						<tr>
+							<td style="width: 50%;">{{ uil.user.username }}</td>
+							<td style="width: 50%;">{{ uil.elo|floatformat:2 }}</td>
+						</tr>
+					{% endfor %}
+				{% endfor %}	
+			</table>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
 {% else %}
-	No leagues yet.
+	<div class = "col-md-12" style="text-align:center;">
+		No leagues yet.
+	</div>
 {% endif %}
 {% endblock %}

@@ -2,11 +2,25 @@
 
 {% block league_content %}
 {% if usersinleague %}
-    <ul>
-    {% for uil in usersinleague %}
-        <li>{{ uil.user.username }}: {{ uil.elo|floatformat:2 }}</li>
-    {% endfor %}
-    </ul>
+	<br><h1 style="text-align:center; color:#9C2121;">{{ league_name }} Leaderboard</h1><br>
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-10">
+			<table class="table table-hover table-bordered" style = "width:80%">
+		    	<tr>
+					<th style="text-align:center; width: 50%;">Player</th>
+					<th style="text-align:center; width: 50%;">Elo Rating</th>
+				</tr>
+		    	{% for uil in usersinleague %}
+		    	<tr>
+		        	<td style="text-align:center; width: 50%;">{{ uil.user.username }}</td>
+		        	<td style="text-align:center; width: 50%;">{{ uil.elo|floatformat:2 }}</td>
+		        <tr>
+		    	{% endfor %}
+		    </table>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
 {% else %}
     <p>No players are available.</p>
 {% endif %}

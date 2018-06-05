@@ -1,0 +1,35 @@
+{% extends "catansite/league_base.html" %}
+
+{% block league_content %}
+
+<br><h1 style="text-align:center; color:#9C2121;">{{ username }}'s History</h1><br>
+	{% if games %}
+		{% for uig in uigs %}
+			<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-10">
+					<table class="table table-hover table-bordered" style = "width:80%">
+						<tr>
+							<th colspan="2" style="font-size:x-large; color:#9C2121;">{{ uig.game.played_date }}</th>
+						</tr>
+						<tr>
+							<th>Player</th>
+							<th>Points</th>
+						</tr>
+						{% for uig in uig.game.useringame_set.all|dictsortreversed:"score" %}
+							<tr>
+								<td>{{ uig.uil.user.username }}</td>
+								<td>{{ uig.score }}</td>
+							</tr>
+						{% endfor %}
+					</table>
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<div class = "col-md-12" style="text-align:center;">
+			No games played yet.
+		</div>
+	{% endif %}
+{% endblock %}

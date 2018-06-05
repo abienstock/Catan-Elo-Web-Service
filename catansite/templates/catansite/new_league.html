@@ -2,23 +2,37 @@
 
 {% block content %}
 
-<h1>New League</h1>
-<form action="{% url 'new_league' %}" method="post">
-<p>League Name</p>
-<input type ="text" name ="league_name"/>
-<br>
-<small style="color: grey">Only letters or digits</small>
-<p>League Members (usernames)</p>
-{% csrf_token %}
-<script>
-var i;
-for (i = 0; i < 10; i ++) {
-	document.write("<br><input type=\"text\" name=\"user_name");
-	document.write(i);
-	document.write("\">");
-}
-</script>
-<br>
-<input type="submit" value="Add League!" />
-</form>
+	<br><h1 style="text-align:center; color:#9C2121;">New League</h1><br>
+	<form action="{% url 'new_league' %}" method="post">
+		<div class = "col-md-12" style="text-align:center;">
+			<b>League Name</b>
+		</div>
+		<div class="row">
+			<div class = "col-md-4"></div>
+			<div class = "col-md-4" style="text-align:center;">
+				<input class="form-control" type ="text" name ="league_name" style="text-align:center"/>
+			</div>			
+			<div class = "col-md-4"></div>			
+		</div>
+		<div class = "col-md-12" style="text-align:center;">
+			<small style="color: grey">Only letters or digits</small>
+		</div>
+		<br>
+		<div class = "col-md-12" style="text-align:center;">
+			<b>League Members (usernames)</b>
+		</div>
+		{% csrf_token %}
+		<script>
+		var i;
+		for (i = 0; i < 10; i ++) {
+			document.write("<div class=\"row\"><div class = \"col-md-4\"></div><div class=\"col-md-4\" style=\"text-align:center;\"><input class=\"form-control\"type=\"text\" name=\"user_name");
+			document.write(i);
+			document.write("\" style=\"text-align:center\"></div><div class = \"col-md-4\"></div></div>");
+		}
+		</script>
+		<br>
+		<div class = "col-md-12" style="text-align:center;">
+			<input type="submit" value="Add League!" class="btn btn-danger btn-custom"/>
+		</div>
+	</form>
 {% endblock %}

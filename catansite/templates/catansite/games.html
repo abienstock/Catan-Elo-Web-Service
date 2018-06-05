@@ -2,56 +2,71 @@
 
 {% block league_content %}
 
-<h1>Games</h1>
-
-<u1>
+	<br><h1 style="text-align:center; color:#9C2121;">{{ league_name }} Games</h1><br>
 	{% if games %}
 		{% for game in games|dictsortreversed:"played_date" %}
-			<li>{{ game.played_date }}
 			<form action="{% url 'games' league_name game.id %}" method="post">
 			{% csrf_token %}
-			<script>
-				var i = 0;
-				document.write("{% for useringame in game.useringame_set.all|dictsortreversed:'score' %}<br><select name=\"username");
-				document.write(i);
-				document.write("\"><option value=\"{{ useringame.uil.user.username }}\" selected hidden>{{ useringame.uil.user.username }}</option><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
-				document.write(i);
-				document.write("\"><option value=\"{{ useringame.score }}\" selected hidden>{{ useringame.score }}</option><option value = \"None\">None</option>");
-				var j;
-				for (j = 2; j < 11; j ++) {
-					document.write("<option value=");
-					document.write(j);
-					document.write(">");
-					document.write(j);
-					document.write("</option>");
-				}
-				document.write("</select><br>");
-				i ++;
-				document.write("{% endfor %}");
-				while(i < 5){
-					document.write("<br><select name=\"username");
-					document.write(i);
-					document.write("\"><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
-					document.write(i);
-					document.write("\"><option value=\"None\">None</option>")
-					var j;
-					for (j = 2; j < 11; j ++) {
-						document.write("<option value=");
-						document.write(j);
-						document.write(">");
-						document.write(j);
-						document.write("</option>");
-					}
-					document.write("</select><br>");				
-					i ++;
-				}
-			</script>
-			<br>
-			<input type="submit" value="Edit Game" />
+				<div class="row">
+					<div class="col-md-2"></div>
+					<div class="col-md-10">
+						<table class="table table-bordered" style = "width:80% ">
+							<tr>
+								<th colspan="2" style="font-size:x-large; color:#9C2121;">{{ game.played_date }}</th>
+							</tr>
+							<tr>
+								<th>Player</th>
+								<th>Points</th>
+							</tr>
+							<script>
+								var i = 0;
+								document.write("{% for useringame in game.useringame_set.all|dictsortreversed:'score' %}<tr><td><select class=\"form-control\" name=\"username");
+								document.write(i);
+								document.write("\"><option value=\"{{ useringame.uil.user.username }}\" selected hidden>{{ useringame.uil.user.username }}</option><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select></td><td><select class=\"form-control\" name=\"user_score");
+								document.write(i);
+								document.write("\"><option value=\"{{ useringame.score }}\" selected hidden>{{ useringame.score }}</option><option value = \"None\">None</option>");
+								var j;
+								for (j = 2; j < 11; j ++) {
+									document.write("<option value=");
+									document.write(j);
+									document.write(">");
+									document.write(j);
+									document.write("</option>");
+								}
+								document.write("</select></td></tr>");
+								i ++;
+								document.write("{% endfor %}");
+								while(i < 5){
+									document.write("<tr><td><select class=\"form-control\" name=\"username");
+									document.write(i);
+									document.write("\"><option value = \"None\">None</option>{% for uil in usersinleague %}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select></td><td><select class=\"form-control\" name=\"user_score");
+									document.write(i);
+									document.write("\"><option value=\"None\">None</option>")
+									var j;
+									for (j = 2; j < 11; j ++) {
+										document.write("<option value=");
+										document.write(j);
+										document.write(">");
+										document.write(j);
+										document.write("</option>");
+									}
+									document.write("</select></td></tr>");				
+									i ++;
+								}
+							</script>
+						</table>
+					</div>
+					<div class="col-md-2"></div>
+				</div>
+				<div class = "col-md-12" style="text-align:center;">
+					<input type="submit" value="Edit Game" class="btn btn-danger btn-custom"/>
+				</div>
 			</form>
+			<br>
 		{% endfor %}
 	{% else %}
-		No games played yet.
+		<div class = "col-md-12" style="text-align:center;">
+			No games played yet.
+		</div>
 	{% endif %}
-</ul>
 {% endblock %}

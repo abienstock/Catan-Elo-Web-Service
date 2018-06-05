@@ -1,0 +1,16 @@
+{% extends "catansite/league_base.html" %}
+
+{% block league_content %}
+<br><h1 style="text-align:center; color:#9C2121;">Player Histories</h1>
+{% if games %}
+	{% for uil in uils %}
+		<div class = "col-md-12" style="text-align:center;">
+			<a style="font-size:x-large; color:#9C2121;" href = "{% url 'player_histories' league_name uil.user.username %}">{{ uil.user.username }}</a>
+		</div>
+	{% endfor %}
+{% else %}
+	<div class = "col-md-12" style="text-align:center;">
+		No games played yet.
+	</div>
+{% endif %}
+{% endblock %}

@@ -2,16 +2,16 @@
 
 {% block content %}
 
-<h1>New Game</h1>
+<br><h1 style="text-align:center; color:#9C2121;">New Game</h1><br>
 {% if league_name %}
 	<form action="{% url 'new_game' league_name %}" method="post">
 	{% csrf_token %}
 	<script>
 	var i;
 	for (i = 0; i < 5; i ++) {
-		document.write("<br><select name=\"username");
+		document.write("<div class=\"row\"><div class=\"col-md-2\"></div><div class=\"col-md-4\"><select class=\"form-control\" name=\"username");
 		document.write(i);
-		document.write("\"><option value = \"None\">None</option>{% for uil in uils%}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select><select name=\"user_score");
+		document.write("\"><option value = \"None\">None</option>{% for uil in uils%}<option value={{ uil.user.username }}>{{ uil.user.username }}</option>{% endfor %}</select></div><div class=\"col-md-4\"><select class=\"form-control\" name=\"user_score");
 		document.write(i);
 		document.write("\"><option value=\"None\">None</option>")
 		var j;
@@ -22,26 +22,38 @@
 			document.write(j);
 			document.write("</option>");
 		}
-		document.write("</select><br>");
+		document.write("</select></div><div class=\"col-md-2\"></div></div>");
 	}
 	</script>
 	<br>
-	<input type="submit" value="Add Game!" />
+	<div class = "col-md-12" style="text-align:center;">
+		<input type="submit" value="Add Game!" class="btn btn-danger btn-custom"/>
+	</div>
 	</form>
 {% else %}
 	{% if leagues %}
 		<form action="{% url 'new_game' %}" method="post">
 		{% csrf_token %}
-		<select name="league_name">
-		{% for league in leagues %}
-			<option value="{{ league.league_name }}">{{ league.league_name }}</option>
-		{% endfor %}
-		</select>
-		<br><br>
-		<input type="submit" value="Add Game!" />
+		<div class="row">
+			<div class="col-md-4"></div>
+			<div class="col-md-4" style="text-align:center;">
+				<select name="league_name" class="form-control">
+				{% for league in leagues %}
+					<option value="{{ league.league_name }}">{{ league.league_name }}</option>
+				{% endfor %}
+				</select>
+			</div>
+			<div class="col-md-4"></div>
+		</div>
+		<br>
+		<div class = "col-md-12" style="text-align:center;">
+			<input type="submit" value="Add Players and Points" class="btn btn-danger btn-custom"/>
+		</div>
 		</form>
 	{% else %}
-	No leagues yet.
+		<div class = "col-md-12" style="text-align:center;">
+			No leagues yet.
+		</div>
 	{% endif %}
 {% endif %}
 {% endblock %}

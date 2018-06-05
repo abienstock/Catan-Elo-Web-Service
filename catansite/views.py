@@ -38,7 +38,7 @@ def game_results(request, league_name, game_id):
 			return render(request, 'catansite/game.html', context)
 	return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))
 
-def player_stats(request, league_name, username):
+def player_histories(request, league_name, username):
 	league = get_object_or_404(League, league_name = league_name)
 	uils = league.userinleague_set.all()
 	games = league.game_set.all()
@@ -46,17 +46,17 @@ def player_stats(request, league_name, username):
 	for user in uils:
 		if request.user.username == user.user.username:
 			context = {'games': games, 'league_name': league_name, 'uigs': uigs, 'username': username}
-			return render(request, 'catansite/player_stats.html', context)
+			return render(request, 'catansite/player_histories.html', context)
 	return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))			
 
-def player_stats_main(request, league_name):
+def player_histories_main(request, league_name):
 	league = get_object_or_404(League, league_name = league_name)
 	games = league.game_set.all()	
 	uils = league.userinleague_set.all()
 	for user in uils:
 		if request.user.username == user.user.username:
 			context = {'games': games, 'uils': uils, 'league_name': league_name}
-			return render(request, 'catansite/player_stats_main.html', context)
+			return render(request, 'catansite/player_histories_main.html', context)
 	return HttpResponseForbidden("<h1>Forbidden (403)</h1>User '%s' is not in league '%s'." % (request.user.username, league_name))
 
 def calc_expected(elo_a, elo_b):
