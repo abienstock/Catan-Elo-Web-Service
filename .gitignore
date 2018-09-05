@@ -4,4 +4,3 @@ lib/*
 static/*
 catansite/__pycache__
 catansite/migrations
-catansite/settings.py
